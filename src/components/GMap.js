@@ -10,8 +10,7 @@ import { connect } from "react-redux";
 
 const MyMapComponent = compose(
   withProps({
-    googleMapURL:
-      "https://maps.googleapis.com/maps/api/js?key=AIzaSyDgriiMoUNZs_yhncj_uYHbKEessHZGTHU",
+    googleMapURL: "https://maps.googleapis.com/maps/api/js?key=",
     loadingElement: <div style={{ height: `100%` }} />,
     containerElement: <div style={{ height: `250px`, width: `400px` }} />,
     mapElement: <div style={{ height: `100%` }} />
