@@ -5,11 +5,12 @@ import {
   NavbarBrand,
   Nav,
   NavItem,
-  NavLink,
   NavbarText,
   Container,
   NavbarToggler
 } from "reactstrap";
+import { connect } from "react-redux";
+import Switch from "./Switch";
 
 class AppNavBar extends Component {
   state = {
@@ -23,24 +24,48 @@ class AppNavBar extends Component {
   };
 
   render() {
+    const {
+      currentIcon,
+      currentLocation,
+      currentTemp,
+      currentFeelsLike
+    } = this.props.weather;
+    const temperature = (
+      <div>
+        <NavItem>
+          <NavbarText className="ml-2">
+            {Math.round(currentTemp)} °{this.props.metric ? "C" : "F"}
+          </NavbarText>
+          <NavbarText className="ml-2">
+            Feels Like {Math.round(currentFeelsLike)} °
+            {this.props.metric ? "C" : "F"}
+          </NavbarText>
+        </NavItem>
+      </div>
+    );
+
     return (
       <div>
-        <Navbar color="dark" dark expand="sm" className="mb-5">
+        <Navbar color="light" light expand="sm" className="mb-5">
           <Container>
-            <NavbarBrand href="/">Weather App</NavbarBrand>
+            <NavbarBrand href="/">MyWeather</NavbarBrand>
             <NavbarToggler onClick={this.toggle}></NavbarToggler>
             <Collapse isOpen={this.state.isOpen} navbar>
               <Nav className="mr-auto" navbar>
                 <NavItem>
-                  <NavLink href="#">Components</NavLink>
+                  <NavbarText>
+                    <strong>{currentLocation}</strong>
+                  </NavbarText>
                 </NavItem>
-                <NavItem>
-                  <NavLink href="https://github.com/reactstrap/reactstrap">
-                    GitHub
-                  </NavLink>
+                <NavItem className="ml-2">
+                  <img
+                    src={`http://openweathermap.org/img/wn/${currentIcon}.png`}
+                    alt="Weather Icon"
+                  />
                 </NavItem>
+                {currentTemp ? temperature : null}
               </Nav>
-              <NavbarText>Simple text</NavbarText>
+              <Switch />
             </Collapse>
           </Container>
         </Navbar>
@@ -49,4 +74,9 @@ class AppNavBar extends Component {
   }
 }
 
-export default AppNavBar;
+const mapStateToProps = state => ({
+  weather: state.weather,
+  metric: state.unit.metric
+});
+
+export default connect(mapStateToProps)(AppNavBar);

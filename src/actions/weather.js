@@ -1,33 +1,64 @@
-import { GET_WEATHER, WEATHER_LOADING, WEATHER_LOADED } from "./types";
+import {
+  GET_WEATHER,
+  GET_WEATHER_DIFF_UNIT,
+  GET_CURRENT_WEATHER,
+  WEATHER_LOADING,
+  WEATHER_LOADED
+} from "./types";
 import axios from "axios";
+import { baseURL } from "../config";
+import { getErrorMessage } from "./errors";
+
+export const getWeatherWithDifferentUnit = () => (dispatch, getState) => {
+  const { lat, lon } = getState().weather;
+  const { metric } = getState().unit;
+  if (metric) {
+    axios
+      .get(`${baseURL}&units=metric&lat=${lat}&lon=${lon}`)
+      .then(res => {
+        dispatch({ type: GET_WEATHER_DIFF_UNIT, payload: res.data });
+        dispatch({ type: WEATHER_LOADED });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  } else {
+    axios
+      .get(`${baseURL}&lat=${lat}&lon=${lon}`)
+      .then(res => {
+        dispatch({ type: GET_WEATHER_DIFF_UNIT, payload: res.data });
+        dispatch({ type: WEATHER_LOADED });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+};
 
 export const getCurrentLocationWeather = () => dispatch => {
   dispatch({ type: WEATHER_LOADING });
-  axios
-    .get(
-      "http://api.openweathermap.org/data/2.5/weather?APPID=133630514a7236f21424fca33c7eb702&units=metric&q=toronto,ca"
-    )
-    .then(res => {
-      dispatch({
-        type: GET_WEATHER,
-        payload: res.data
-      });
-      dispatch({ type: WEATHER_LOADED });
-    })
-    .catch(err => {
-      console.log(err);
-    });
-};
-
-const getCurrentLocation = () => {
+  // success callback
   function success(position) {
     const latitude = position.coords.latitude;
     const longitude = position.coords.longitude;
-    return { lat: latitude, lon: longitude };
+    axios
+      .get(`${baseURL}&units=metric&lat=${latitude}&lon=${longitude}`)
+      .then(res => {
+        dispatch({
+          type: GET_CURRENT_WEATHER,
+          payload: res.data
+        });
+        dispatch({ type: WEATHER_LOADED });
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }
 
+  // fail callback
   function error() {
-    console.log("Unable to retrieve your location");
+    const msg = "Unable to retrieve your location";
+    dispatch(getErrorMessage(msg));
   }
 
   if (!navigator.geolocation) {
@@ -35,5 +66,37 @@ const getCurrentLocation = () => {
   } else {
     console.log("Locating...");
     navigator.geolocation.getCurrentPosition(success, error);
+  }
+};
+
+export const getWeather = (city, country) => (dispatch, getState) => {
+  dispatch({ type: WEATHER_LOADING });
+  const { metric } = getState().unit;
+  if (metric) {
+    axios
+      .get(`${baseURL}&units=metric&q=${city},${country}`)
+      .then(res => {
+        dispatch({
+          type: GET_WEATHER,
+          payload: res.data
+        });
+        dispatch({ type: WEATHER_LOADED });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  } else {
+    axios
+      .get(`${baseURL}&q=${city},${country}`)
+      .then(res => {
+        dispatch({
+          type: GET_WEATHER,
+          payload: res.data
+        });
+        dispatch({ type: WEATHER_LOADED });
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }
 };
