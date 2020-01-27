@@ -4,13 +4,15 @@ import {
   withScriptjs,
   withGoogleMap,
   GoogleMap,
-  Marker
+  Marker,
+  InfoWindow
 } from "react-google-maps";
 import { connect } from "react-redux";
 
 const MyMapComponent = compose(
   withProps({
-    googleMapURL: "https://maps.googleapis.com/maps/api/js?key=",
+    googleMapURL:
+      "https://maps.googleapis.com/maps/api/js?key=AIzaSyDgriiMoUNZs_yhncj_uYHbKEessHZGTHU",
     loadingElement: <div style={{ height: `100%` }} />,
     containerElement: <div style={{ height: `250px`, width: `400px` }} />,
     mapElement: <div style={{ height: `100%` }} />
@@ -22,18 +24,22 @@ const MyMapComponent = compose(
     defaultZoom={10}
     defaultCenter={{ lat: props.lat, lng: props.lon }}
   >
-    {props.isMarkerShown && (
-      <Marker
-        position={{ lat: props.lat, lng: props.lon }}
-        onClick={props.onMarkerClick}
-      />
-    )}
+    <Marker
+      position={{ lat: props.lat, lng: props.lon }}
+      onClick={props.onMarkerClick}
+    >
+      {props.isOpen && (
+        <InfoWindow onCloseClick={props.onMarkerClick}>
+          <p>Hello</p>
+        </InfoWindow>
+      )}
+    </Marker>
   </GoogleMap>
 ));
 
 export class GMap extends Component {
   state = {
-    isMarkerShown: false
+    isOpen: false
   };
 
   componentDidMount() {
@@ -47,8 +53,7 @@ export class GMap extends Component {
   };
 
   handleMarkerClick = () => {
-    this.setState({ isMarkerShown: false });
-    this.delayedShowMarker();
+    this.setState({ isOpen: !this.state.isOpen });
   };
   render() {
     const { lat, lon } = this.props.weather;
@@ -56,7 +61,7 @@ export class GMap extends Component {
       <MyMapComponent
         lat={lat}
         lon={lon}
-        isMarkerShown={this.state.isMarkerShown}
+        isOpen={this.state.isOpen}
         onMarkerClick={this.handleMarkerClick}
       />
     );
