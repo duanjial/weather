@@ -1,6 +1,5 @@
 import {
   GET_WEATHER,
-  GET_WEATHER_DIFF_UNIT,
   GET_CURRENT_WEATHER,
   WEATHER_LOADING,
   WEATHER_LOADED
@@ -50,16 +49,6 @@ export default function(state = initialState, action) {
         tempMax: action.payload.main.temp_max,
         lat: action.payload.coord.lat,
         lon: action.payload.coord.lon
-      };
-    case GET_WEATHER_DIFF_UNIT:
-      return {
-        ...state,
-        temp: action.payload.main.temp,
-        currentTemp: action.payload.main.temp,
-        feelsLike: action.payload.main.feels_like,
-        currentFeelsLike: action.payload.main.feels_like,
-        tempMin: action.payload.main.temp_min,
-        tempMax: action.payload.main.temp_max
       };
     case GET_CURRENT_WEATHER:
       return {

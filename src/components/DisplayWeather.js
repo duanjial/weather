@@ -1,9 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import {
-  getCurrentLocationWeather,
-  getWeatherWithDifferentUnit
-} from "../actions/weather";
+import { getCurrentLocationWeather } from "../actions/weather";
 import PropTypes from "prop-types";
 import GMap from "./GMap";
 
@@ -16,11 +13,6 @@ export class DisplayWeather extends Component {
     this.props.getCurrentLocationWeather();
   }
 
-  componentDidUpdate = prevProps => {
-    if (prevProps.metric !== this.props.metric) {
-      this.props.getWeatherWithDifferentUnit();
-    }
-  };
   render() {
     const {
       city,
@@ -39,10 +31,14 @@ export class DisplayWeather extends Component {
           <h2>Current Weather</h2>
           <span>
             <strong className="mr-1">{city}</strong>
-            {Math.round(temp)} °{this.props.metric ? "C" : "F"}
+            {this.props.metric
+              ? `${Math.round(temp)}°C`
+              : `${Math.round(cToF(temp))}°F`}
             <span className="ml-2">
-              Feels Like {Math.round(feelsLike)} °
-              {this.props.metric ? "C" : "F"}
+              Feels Like{" "}
+              {this.props.metric
+                ? `${Math.round(feelsLike)}°C`
+                : `${Math.round(cToF(feelsLike))}°F`}
             </span>
           </span>
           <br></br>
@@ -57,12 +53,18 @@ export class DisplayWeather extends Component {
           </span>
           <p>
             <span>
-              Low at: {Math.round(tempMin)} °{this.props.metric ? "C" : "F"}
+              Low at:{" "}
+              {this.props.metric
+                ? `${Math.round(tempMin)}°C`
+                : `${Math.round(cToF(tempMin))}°F`}
             </span>
           </p>
           <p>
             <span>
-              High at: {Math.round(tempMax)} °{this.props.metric ? "C" : "F"}
+              High at:{" "}
+              {this.props.metric
+                ? `${Math.round(tempMax)}°C`
+                : `${Math.round(cToF(tempMax))}°F`}
             </span>
           </p>
         </div>
@@ -94,7 +96,10 @@ const mapStateToProps = state => ({
   weather: state.weather,
   metric: state.unit.metric
 });
+
+export const cToF = celcius => celcius * 1.8 + 32;
+
 export default connect(
   mapStateToProps,
-  { getCurrentLocationWeather, getWeatherWithDifferentUnit }
+  { getCurrentLocationWeather }
 )(DisplayWeather);

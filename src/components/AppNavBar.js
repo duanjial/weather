@@ -11,6 +11,7 @@ import {
 } from "reactstrap";
 import { connect } from "react-redux";
 import Switch from "./Switch";
+import { cToF } from "./DisplayWeather";
 
 class AppNavBar extends Component {
   state = {
@@ -34,11 +35,15 @@ class AppNavBar extends Component {
       <div>
         <NavItem>
           <NavbarText className="ml-2">
-            {Math.round(currentTemp)} °{this.props.metric ? "C" : "F"}
+            {this.props.metric
+              ? `${Math.round(currentTemp)}°C`
+              : `${Math.round(cToF(currentTemp))}°F`}
           </NavbarText>
           <NavbarText className="ml-2">
-            Feels Like {Math.round(currentFeelsLike)} °
-            {this.props.metric ? "C" : "F"}
+            Feels Like{" "}
+            {this.props.metric
+              ? `${Math.round(currentFeelsLike)}°C`
+              : `${Math.round(cToF(currentFeelsLike))}°F`}
           </NavbarText>
         </NavItem>
       </div>

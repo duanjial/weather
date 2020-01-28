@@ -1,6 +1,5 @@
 import {
   GET_WEATHER,
-  GET_WEATHER_DIFF_UNIT,
   GET_CURRENT_WEATHER,
   WEATHER_LOADING,
   WEATHER_LOADED
@@ -8,32 +7,6 @@ import {
 import axios from "axios";
 import { baseURL } from "../config";
 import { getErrorMessage } from "./errors";
-
-export const getWeatherWithDifferentUnit = () => (dispatch, getState) => {
-  const { lat, lon } = getState().weather;
-  const { metric } = getState().unit;
-  if (metric) {
-    axios
-      .get(`${baseURL}&units=metric&lat=${lat}&lon=${lon}`)
-      .then(res => {
-        dispatch({ type: GET_WEATHER_DIFF_UNIT, payload: res.data });
-        dispatch({ type: WEATHER_LOADED });
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  } else {
-    axios
-      .get(`${baseURL}&lat=${lat}&lon=${lon}`)
-      .then(res => {
-        dispatch({ type: GET_WEATHER_DIFF_UNIT, payload: res.data });
-        dispatch({ type: WEATHER_LOADED });
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  }
-};
 
 export const getCurrentLocationWeather = () => dispatch => {
   dispatch({ type: WEATHER_LOADING });
@@ -69,34 +42,18 @@ export const getCurrentLocationWeather = () => dispatch => {
   }
 };
 
-export const getWeather = (city, country) => (dispatch, getState) => {
+export const getWeather = (city, country) => dispatch => {
   dispatch({ type: WEATHER_LOADING });
-  const { metric } = getState().unit;
-  if (metric) {
-    axios
-      .get(`${baseURL}&units=metric&q=${city},${country}`)
-      .then(res => {
-        dispatch({
-          type: GET_WEATHER,
-          payload: res.data
-        });
-        dispatch({ type: WEATHER_LOADED });
-      })
-      .catch(err => {
-        console.log(err);
+  axios
+    .get(`${baseURL}&units=metric&q=${city},${country}`)
+    .then(res => {
+      dispatch({
+        type: GET_WEATHER,
+        payload: res.data
       });
-  } else {
-    axios
-      .get(`${baseURL}&q=${city},${country}`)
-      .then(res => {
-        dispatch({
-          type: GET_WEATHER,
-          payload: res.data
-        });
-        dispatch({ type: WEATHER_LOADED });
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  }
+      dispatch({ type: WEATHER_LOADED });
+    })
+    .catch(err => {
+      console.log(err);
+    });
 };

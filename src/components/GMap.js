@@ -30,7 +30,21 @@ const MyMapComponent = compose(
     >
       {props.isOpen && (
         <InfoWindow onCloseClick={props.onMarkerClick}>
-          <p>Hello</p>
+          <div className="container">
+            <span>
+              <strong>{props.city}</strong>
+            </span>
+            <br />
+            <span>
+              Pressure: {} Humitity: {}
+            </span>
+            <br />
+            <span>
+              Sunrise: {} Sunset: {}
+            </span>
+            <br />
+            <span>Visibility: {}</span>
+          </div>
         </InfoWindow>
       )}
     </Marker>
@@ -56,9 +70,10 @@ export class GMap extends Component {
     this.setState({ isOpen: !this.state.isOpen });
   };
   render() {
-    const { lat, lon } = this.props.weather;
+    const { city, lat, lon } = this.props.weather;
     return (
       <MyMapComponent
+        city={city}
         lat={lat}
         lon={lon}
         isOpen={this.state.isOpen}
