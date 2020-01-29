@@ -29,8 +29,16 @@ class AppNavBar extends Component {
       currentIcon,
       currentLocation,
       currentTemp,
-      currentFeelsLike
+      currentFeelsLike,
+      isLoading
     } = this.props.weather;
+
+    const loading = (
+      <div className="spinner-border" role="status">
+        <span className="sr-only">Loading...</span>
+      </div>
+    );
+
     const temperature = (
       <div>
         <NavItem>
@@ -49,6 +57,23 @@ class AppNavBar extends Component {
       </div>
     );
 
+    const loaded = (
+      <Nav className="mr-auto" navbar>
+        <NavItem>
+          <NavbarText>
+            <strong>{currentLocation}</strong>
+          </NavbarText>
+        </NavItem>
+        <NavItem className="ml-2">
+          <img
+            src={`http://openweathermap.org/img/wn/${currentIcon}.png`}
+            alt="Weather Icon"
+          />
+        </NavItem>
+        {currentTemp ? temperature : null}
+      </Nav>
+    );
+
     return (
       <div>
         <Navbar color="light" light expand="sm" className="mb-5">
@@ -56,20 +81,7 @@ class AppNavBar extends Component {
             <NavbarBrand href="/">MyWeather</NavbarBrand>
             <NavbarToggler onClick={this.toggle}></NavbarToggler>
             <Collapse isOpen={this.state.isOpen} navbar>
-              <Nav className="mr-auto" navbar>
-                <NavItem>
-                  <NavbarText>
-                    <strong>{currentLocation}</strong>
-                  </NavbarText>
-                </NavItem>
-                <NavItem className="ml-2">
-                  <img
-                    src={`http://openweathermap.org/img/wn/${currentIcon}.png`}
-                    alt="Weather Icon"
-                  />
-                </NavItem>
-                {currentTemp ? temperature : null}
-              </Nav>
+              {isLoading ? loading : loaded}
               <Switch />
             </Collapse>
           </Container>

@@ -28,9 +28,9 @@ export class DisplayWeather extends Component {
     const weatherLoaded = (
       <div style={style}>
         <div className="mx-auto">
-          <h2>Current Weather</h2>
+          <h2>Current Weather for {city}</h2>
           <span>
-            <strong className="mr-1">{city}</strong>
+            {/* <strong className="mr-1">{city}</strong> */}
             {this.props.metric
               ? `${Math.round(temp)}°C`
               : `${Math.round(cToF(temp))}°F`}
